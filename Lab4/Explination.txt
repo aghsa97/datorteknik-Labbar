@@ -1,0 +1,63 @@
+### Task_1
+
+# The buf_in function
+Purpose: Implements a custom input function to efficiently read data from a file in chunks using a buffer.
+static int bufIndex = 0; A 'static' variable to track the current position within the buffer. The 'static' keyword means it keeps its value between function calls.
+Logic:
+
+If bytesInBuffer is zero, it's time to read:
+read(filename, buffer, BUF_SIZE): Reads up to 16 bytes from the file and stores them in the buffer.
+
+End of File Check: If read returns 0, that means the end of the file is reached, and the function returns EOF (a special end-of-file signal).
+bufIndex = 0: Reset the index to the beginning of the buffer.
+
+Extract a Byte:
+bytesInBuffer--: Decrement the count of available bytes.
+return buffer[bufIndex++]: Return the byte at the current bufIndex and then increment the index for the next call.
+
+### Task_2
+
+# buf_flush()
+Purpose: Writes the contents of the buffer to the file designated by the filename file descriptor.
+Logic:
+write(filename, buffer, bufIndex): Writes the data in the buffer to the file.
+bufIndex = 0: Resets the bufIndex to the beginning of the buffer.
+
+# buf_out(char byte)
+Purpose: Adds a single character (byte) to the buffer and manages flushing if the buffer is full.
+Logic
+buffer[bufIndex++] = byte;: Stores the character in the buffer and increments bufIndex.
+If Buffer Full: If bufIndex reaches the BUF_SIZE, it does the following:
+write(filename, buffer, BUF_SIZE): Writes the entire buffer to the file.
+bufIndex = 0: Resets bufIndex to start filling the buffer again.
+
+# *setFileContent(char string)
+Purpose: Writes a complete string to the file using the buffering functions.
+Logic:
+Loop: Iterates over each character in the input string.
+buf_out(string[i]): Calls buf_out to add each character to the buffer.
+buf_flush(): Empties any remaining contents of the buffer to the file.
+
+### Task_3
+
+## Global Variables
+
+read_buffer[BUF_SIZE]: Buffer for storing data read from the source file.
+bytesInReadBuffer: Tracks the number of bytes currently in the read_buffer.
+readBufIndex: Index to keep track of the current position within the read_buffer.
+src_file: File descriptor for the source file.
+write_buffer[BUF_SIZE]: Buffer for storing data before writing to the destination file.
+writeBufIndex: Index to track the current position within the write_buffer.
+dest_file: File descriptor for the destination file.
+fileSize: Stores the overall size of the file being copied.
+
+## Functions
+
+buf_in(): Same as before, reads from the source file into the read_buffer.
+buf_out(char byte): Same as before, writes a byte to the write_buffer.
+buf_flush(): Same as before, writes the contents of the write_buffer to the destination file.
+copyWithBuffer():
+Reads bytes from the source file using buf_in().
+Writes bytes to the destination file using buf_out().
+Keeps track of the file size (fileSize) for timing calculations.
+Flushes any remaining data in the write_buffer using buf_flush().
